@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "azure-devops-agent.fullname" . }}
+  labels:
+    app: "{{ template "azure-devops-agent.fullname" . }}"
+    chart: "{{ template "azure-devops-agent.chart" . }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  selector:
+    matchLabels:
+      app: "{{ template "azure-devops-agent.fullname" . }}"
+      release: {{ .Release.Name | quote }}
+  {{- if .Values.updateStrategy }}
+  strategy: {{ toYaml .Values.updateStrategy | nindent 4 }}
+  {{- end }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: "{{ template "azure-devops-agent.fullname" . }}"
+        chart: "{{ template "azure-devops-agent.chart" . }}"
+        release: {{ .Release.Name | quote }}
+{{- if or .Values.podAnnotations }}
+      annotations:
+{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- end }}
+    spec:
+      {{- if .Values.schedulerName }}
+      schedulerName: "{{ .Values.schedulerName }}"
+      {{- end }}
+{{- include "azure-devops-agent.imagePullSecrets" . | indent 6 }}
+      containers:      
+      - name: azure-devops-agent
+        image: {{ template "azure-devops-agent.image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        env:
+        - name: AZP_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "azure-devops-agent.fullname" . }}
+              key: azp_url
+        - name: AZP_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "azure-devops-agent.fullname" . }}
+              key: azp_token
+        - name: AZP_AGENT_NAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "azure-devops-agent.fullname" . }}
+              key: azp_agent_name
+        - name: AZP_POOL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "azure-devops-agent.fullname" . }}
+              key: azp_pool
+        - name: AZP_WORK
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "azure-devops-agent.fullname" . }}
+              key: azp_work
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+    {{- if .Values.sidecars }}
+{{ toYaml .Values.sidecars | indent 6 }}
+    {{- end }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}    
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
