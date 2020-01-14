@@ -26,6 +26,31 @@ rm -rf /azp/agent
 mkdir /azp/agent
 cd /azp/agent
 
+# Proxy checks
+if [ -n "$HTTP_PROXY" ]; then
+  export http_proxy=$HTTP_PROXY
+fi
+
+if [ -n "$HTTPS_PROXY" ]; then
+  export https_proxy=$HTTPS_PROXY
+fi
+
+if [ -n "$NO_PROXY" ]; then
+  export no_proxy=$NO_PROXY
+fi
+
+proxy_args=""
+
+if [ -n "$https_proxy" ]; then
+  proxy_args="--proxyurl $https_proxy "
+elif [ -n "$http_proxy" ]; then
+  proxy_args="--proxyurl $http_proxy "
+fi
+
+if [ -n "$no_proxy" ]; then
+  echo $no_proxy | sed "s/\./\\\./g" | tr "," "\n" > /azp/agent/.proxybypass
+fi
+
 export AGENT_ALLOW_RUNASROOT="1"
 
 cleanup() {
@@ -75,7 +100,7 @@ trap 'cleanup; exit 143' TERM
 
 print_header "3. Configuring Azure Pipelines agent..."
 
-./config.sh --unattended \
+./config.sh --unattended ${proxy_args}\
   --agent "${AZP_AGENT_NAME:-$(hostname)}" \
   --url "$AZP_URL" \
   --auth PAT \
