@@ -22,8 +22,9 @@ spec:
         app: "{{ template "azure-devops-agent.fullname" . }}"
         chart: "{{ template "azure-devops-agent.chart" . }}"
         release: {{ .Release.Name | quote }}
-{{- if or .Values.podAnnotations }}
       annotations:
+        checksum/secrets: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+{{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations | indent 8 }}
 {{- end }}
     spec:
@@ -31,7 +32,7 @@ spec:
       schedulerName: "{{ .Values.schedulerName }}"
       {{- end }}
 {{- include "azure-devops-agent.imagePullSecrets" . | indent 6 }}
-      containers:      
+      containers:
       - name: azure-devops-agent
         image: {{ template "azure-devops-agent.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
@@ -69,7 +70,7 @@ spec:
     {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
-    {{- end }}    
+    {{- end }}
     {{- with .Values.affinity }}
       affinity:
 {{ toYaml . | indent 8 }}
