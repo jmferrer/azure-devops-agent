@@ -65,10 +65,21 @@ replicaCount: 1
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 resources:
-    requests:
-      memory: 512Mi
-      cpu: 300m
+  requests:
+    memory: 512Mi
+    cpu: 300m
 
+## HTTP proxy endpoint to use for containers.
+##
+http_proxy:
+
+## HTTPS proxy endpoint to use for containers.
+##
+https_proxy:
+
+## Blacklist of addresses to skip the proxy when reaching.
+##
+no_proxy:
 
 ## Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
