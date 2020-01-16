@@ -100,8 +100,19 @@ trap 'cleanup; exit 143' TERM
 
 print_header "3. Configuring Azure Pipelines agent..."
 
+if [ -n "$AZP_AGENT_NAME" ]; then
+  number=$(hostname | awk 'BEGIN{FS="-"} {print $NF}')
+  if [ "$number" = "" ]; then
+    agent_name=${AZP_AGENT_NAME}
+  else
+    agent_name=${AZP_AGENT_NAME}-$(hostname | awk 'BEGIN{FS="-"} {print $NF}')
+  fi
+else
+  agent_name=$(hostname)
+fi
+
 ./config.sh --unattended ${proxy_args}\
-  --agent "${AZP_AGENT_NAME:-$(hostname)}" \
+  --agent $agent_name \
   --url "$AZP_URL" \
   --auth PAT \
   --token $(cat "$AZP_TOKEN_FILE") \

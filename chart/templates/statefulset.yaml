@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "azure-devops-agent.fullname" . }}
   labels:
@@ -12,9 +12,7 @@ spec:
     matchLabels:
       app: "{{ template "azure-devops-agent.fullname" . }}"
       release: {{ .Release.Name | quote }}
-  {{- if .Values.updateStrategy }}
-  strategy: {{ toYaml .Values.updateStrategy | nindent 4 }}
-  {{- end }}
+  serviceName: "{{ template "azure-devops-agent.fullname" . }}"
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
