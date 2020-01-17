@@ -17,6 +17,13 @@ azp:
 #   imagePullSecrets:
 #     - myRegistryKeySecretName
 
+## Environment Secret Names
+## If defined, this chart sets secrets as environment vars
+## For instance, creating a secret like that:
+## kubectl create secret generic appsecrets --from-literal=username='my-app'
+## and adding "appsecrets" to this var
+secrets: []
+#- name: k8s-access
 
 ## Azure Devops Agent Documentation
 ## ref:  https://docs.microsoft.com/es-es/azure/devops/pipelines/agents/docker?view=azure-devops#linux
