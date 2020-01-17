@@ -72,6 +72,13 @@ spec:
         - name: no_proxy
           value: {{ .Values.no_proxy | quote }}
         {{- end }}
+        {{ if .Values.secrets }}
+        envFrom:
+        {{- range $key, $val := .Values.secrets }}
+        - secretRef:
+            name: {{ $val | quote }}
+        {{- end }}
+        {{ end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
     {{- if .Values.sidecars }}
