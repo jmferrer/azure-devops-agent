@@ -16,7 +16,7 @@ RUN apt-get update \
         libicu55 \
         libunwind8 \
         netcat \
-        curl sl && \
+        curl && \
     apt-get clean
 
 # Install kubectl client: https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux
@@ -29,6 +29,10 @@ RUN curl https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz -o helm-v3.0.2-linux
     tar -zxvf helm-v3.0.2-linux-amd64.tar.gz && \
     mv linux-amd64/helm /usr/local/bin/helm && \
     rm -rf linux-amd64/
+
+# Install azure cli
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && \
+    apt-get clean
 
 WORKDIR /azp
 
