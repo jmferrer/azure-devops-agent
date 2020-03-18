@@ -30,6 +30,9 @@ RUN curl https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz -o helm-v3.0.2-linux
     mv linux-amd64/helm /usr/local/bin/helm && \
     rm -rf linux-amd64/
 
+# Install azure cli
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
 WORKDIR /azp
 
 COPY ./start.sh .
