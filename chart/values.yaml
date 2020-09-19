@@ -8,15 +8,6 @@ azp:
   pool: "Default"
   work: "_work"
 
-## Global Docker image parameters
-## Please, note that this will override the image parameters, including dependencies, configured to use the global value
-## Current available global Docker image parameters: imageRegistry and imagePullSecrets
-##
-# global:
-#   imageRegistry: myRegistryName
-#   imagePullSecrets:
-#     - myRegistryKeySecretName
-
 ## Environment Secret Names
 ## If defined, this chart sets secrets as environment vars
 ## For instance, creating a secret like that:
@@ -46,14 +37,16 @@ image:
   # pullSecrets:
   #   - myRegistryKeySecretName
 
-## String to partially override wordpress.fullname template (will maintain the release name)
+## String to partially override azure-devops-agent.fullname template (will maintain the release name)
 ##
 # nameOverride:
 
-## String to fully override wordpress.fullname template
+## String to fully override azure-devops-agent.fullname template
 ##
 # fullnameOverride:
 
+## Number of agents in statefulset
+##
 replicaCount: 1
 
 

@@ -1,15 +1,16 @@
 apiVersion: v1
-name: azure-devops-agent
+name: azure-pipelines-agent
 version: 0.0.1
 appVersion: 0.0.1
-description: Azure Devops Agent
+description: Azure Pipelines Agent
 keywords:
 - azure
 - devops
 - agent
 home: https://docs.microsoft.com/es-es/azure/devops/pipelines/agents/docker?view=azure-devops#linux
+icon: https://azurecomcdn.azureedge.net/cvt-8869c7a2457ed309d186dadec2ff0a9def256ce8815f23150183dcd3658e4e35/images/shared/services/devops/pipelines-icon-48.jpg
 sources:
-- https://github.com/jmferrer/azure-devops-agent
+- https://github.com/jmferrer/azure-pipelines-agent
 maintainers:
 - name: Jose Manuel
   email: jmferrer.solera@gmail.com

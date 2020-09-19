@@ -1,4 +1,4 @@
-# Azure Devops Agent
+# Azure Pipelines Agent
 
 ## Prerequisites
 
@@ -10,7 +10,11 @@
 To install the chart with the release name `my-release` in namespace `my-namespace`:
 
 ```console
-$ helm upgrade --install --namespace my-namespace my-release -f values.yaml .
+$ helm repo add fermosit https://harbor.fermosit.es/chartrepo/library
+$ helm upgrade --install --namespace my-namespace my-release
+    --set azp.token=aksjdfjkhadfsjkhkjsdgfjkhagsdf \
+    --set azp.url=https://dev.azure.com/yourazuregroup \
+    fermosit/.
 ```
 
 > **Tip**: List all releases using `helm list`
@@ -27,34 +31,42 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Parameters
 
-The following table lists the configurable parameters of the WordPress chart and their default values.
+The following table lists the configurable parameters of the Azure Pipelines Agent chart and their default values.
 
-|            Parameter                       |                                  Description                                 |                           Default                            |
-| ------------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `image.registry`                           | Zabbix server mysql image registry                                           | `docker.io`                                                  |
-| `image.repository`                         | Zabbix server image name                                                     | `zabbix/zabbix-server-mysql`                                 |
-| `image.tag`                                | Zabbix server image tag                                                      | `{TAG_NAME}`                                                 |
-| `image.pullPolicy`                         | Image pull policy                                                            | `IfNotPresent`                                               |
-| `image.pullSecrets`                        | Specify docker-registry secret names as an array                             | `[]` (does not add image pull secrets to deployed pods)      |
-| `nameOverride.`                            | Strings to partially override fullname templates with a string (will prepend the release name) | `nil`                                      |
-| `fullnameOverride.`                        | Strings to fully override fullname templates with a string                                     | `nil`                                      |
-| `replicaCount`                             | Number of Web Pods to run                                                    | `2`                                                          |
-| `schedulerName`                           | Name of the alternate scheduler                                               | `nil`                                                        |
-| `nodeSelector`                            | Node labels for pod assignment                                                | `{}`                                                         |
-| `tolerations`                             | List of node taints to tolerate                                               | `[]`                                                         |
-| `affinity`                                | Map of node/pod affinities                                                    | `{}`                                                         |
-| `podAnnotations`                          | Pod annotations                                                               | `{}`                                                         |
-| `updateStrategy`                          | Set up update strategy                                                        | `RollingUpdate` for web and `Recreate` for server            |
+|       Parameter     |                                  Description                                                       |                           Default                            |
+| --------------------| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `azp.url`           | Azure Pipelines group                                                                              | `https://dev.azure.com/yourazuregroup` (mandatory)           | 
+| `azp.token`         | Azure Pipelines token                                                                              | `myverysecuretoken` (mandatory                               |
+| `azp.agent_name`    | Azure Pipelines agent name                                                                         | `latest`                                                     |
+| `azp.pool`          | Azure Pipelines pool                                                                               | `Default`                                                    |
+| `azp.work`          | Azure Pipelines work directory (workspace used by agent)                                           | `_work`                                                      |
+| `secrets`           | List of secrets that will be environment vars in the running azure pipelines agent pod             | `[]`                                                         |
+| `image.registry`    | Image registry                                                                                     | `docker.io`                                                  |
+| `image.repository`  | Image name                                                                                         | `jmferrer/azure-devops-agent`                                |
+| `image.tag`         | Image tag                                                                                          | `latest`                                                     |
+| `image.pullPolicy`  | Image pull policy                                                                                  | `Always`                                                     |
+| `image.pullSecrets` | Image pull secret name                                                                             | `[]`                                                         |
+| `nameOverride`      | String to partially override azure-devops-agent.fullname template (will maintain the release name) | `null`                                                       |
+| `fullnameOverride`  | String to fully override azure-devops-agent.fullname template                                      | `null`                                                       |
+| `replicaCount`      | Number of agents in statefulset                                                                    | `1`                                                          |
+| `resources`         | Configure resource requests and limits                                                             | `{}`                                                         |
+| `http_proxy`        | HTTP proxy endpoint to use for containers                                                          | `null`                                                       |
+| `https_proxy`       | HTTPS proxy endpoint to use for containers                                                         | `null`                                                       |
+| `no_proxy`          | Blacklist of addresses to skip the proxy when reaching                                             | `null`                                                       |
+| `nodeSelector`      | Node labels for pod assignment                                                                     | `{}`                                                         |
+| `tolerations`       | Tolerations for pod assignment                                                                     | `[]`                                                         |
+| `affinity`          | Affinity for pod assignment                                                                        | `{}`                                                         |
+| `podAnnotations`    | Pod annotations                                                                                    | `{}`                                                         |
+| `sidecars`          | Add sidecars to the pod                                                                            | `null`
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```console
 $ helm install --name my-release \
-  --set azp.token=aksjdfjkhadfsjkhkjsdgfjkhagsdf \
+    --set azp.token=aksjdfjkhadfsjkhkjsdgfjkhagsdf \
+    --set azp.url=https://dev.azure.com/yourazuregroup \
     .
 ```
-
-The above command sets the visible Zabbix installation name in right top corner of the web interface.
 
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
@@ -64,13 +76,3 @@ $ helm install --name my-release -f values.yaml .
 
 > **Tip**: You can use the default [values.yaml](values.yaml) but you need to specify azp.url and azp.token to connect the agent to some Azure Devops service
 
-
-## Configuration and installation details
-
-### Production configuration
-
-- Number of Agents
-```diff
-- replicaCount: 1
-+ replicaCount: 2
-```
