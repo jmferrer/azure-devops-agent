@@ -7,14 +7,14 @@
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release` in namespace `my-namespace`:
+To install the chart with the release name `azp` in namespace `my-namespace`:
 
 ```console
 $ helm repo add fermosit https://harbor.fermosit.es/chartrepo/library
-$ helm upgrade --install --namespace my-namespace my-release
+$ helm upgrade --install --namespace my-namespace azp
     --set azp.token=aksjdfjkhadfsjkhkjsdgfjkhagsdf \
     --set azp.url=https://dev.azure.com/yourazuregroup \
-    fermosit/.
+    fermosit/azure-pipelines-agent
 ```
 
 > **Tip**: List all releases using `helm list`
@@ -62,7 +62,7 @@ The following table lists the configurable parameters of the Azure Pipelines Age
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```console
-$ helm install --name my-release \
+$ helm install --name azp \
     --set azp.token=aksjdfjkhadfsjkhkjsdgfjkhagsdf \
     --set azp.url=https://dev.azure.com/yourazuregroup \
     .
